@@ -1,33 +1,111 @@
 package ru.gregory.java.core;
-import java.util.Random;
-public class Core1 {
-    public static void main(String[] args) {
-        Random rand = new Random(9);
-        Actions[] action = new Actions[3];
-        int distance = rand.nextInt(9);
-        int heigth = rand.nextInt(11);
-       action [0] =  new Cat("Barsik", distance, heigth);
-        distance = rand.nextInt(9);
-        heigth = rand.nextInt(11);
-        action[1] = new Human("Gregory", distance, heigth);
-        distance = rand.nextInt(9);
-        heigth = rand.nextInt(11);
-        action[0] =  new Robot("Terminator", distance, heigth);
-        Barrier[] barriers = new Barrier[6];
-        boolean isRoad;
-        for (int i = 0; i < barriers.length; i++) {
-            distance = rand.nextInt(10);
-            isRoad = rand.nextBoolean();
-            if (isRoad) {
-                barriers[i] = new Barrier("Road " + i, distance);
-            } else {
-                barriers[i] = new Barrier("Wall " + i, distance);
+
+public class Main {
+
+    public static void main(String[] args){
+	// write your code here
+        int result = 0;
+
+        String[][] array = {{"1","1","1","1"},{"1","1","1","1"}};
+        String[][] error_array = {{"1","2","3","4","1"},{"1","2","3","4"}};
+        String[][] error_data = {{"1","1","3","4",},{"1","2","аа3","4"}};
+
+        System.out.println("Начало работы программы");
+        System.out.println("=======================");
+
+        System.out.println("Случай корректного массива");
+        try {
+            result = 0;
+            result = analyze(array);
+        } catch(MyArraySizeException e){
+            System.out.println(e.startMessage());
+        } catch(MyArrayDataException e){
+            System.out.println(e.startMessage());
+        } finally {
+            System.out.println("Результат суммирования элементов массива равна "+String.valueOf(result));
+            System.out.println("=======================");
+        }
+
+        System.out.println("Случай некорректного массива");
+        try {
+            result = 0;
+            result = analyze(error_array);
+        } catch(MyArraySizeException e){
+            System.out.println(e.startMessage());
+        } catch(MyArrayDataException e){
+            System.out.println(e.startMessage());
+        } finally {
+            System.out.println("Результат суммирования элементов массива равна "+String.valueOf(result));
+            System.out.println("=======================");
+        }
+
+        System.out.println("Случай некорректных данных");
+        try {
+            result = 0;
+            result = analyze(error_data);
+        } catch(MyArraySizeException e){
+            System.out.println(e.startMessage());
+        } catch(MyArrayDataException e){
+            System.out.println(e.startMessage());
+        } finally {
+            System.out.println("Результат суммирования элементов массива равна "+String.valueOf(result));
+            System.out.println("=======================");
+        }
+
+        System.out.println("Работа программы завершена");
+    }
+
+    public static int analyze(String[][] array) throws MyArraySizeException, MyArrayDataException {
+
+        int summ = 0;
+        int value = 0;
+        int row = 0;
+        int cell = 0;
+
+        if(array.length != 2 || array[0].length != 4 || array[1].length != 4) {
+            throw new MyArraySizeException();
+        }
+
+        for(int i=1;i<3;i++){
+            row = i;
+            for(int c=1;c<5;c++){
+                cell = c;
+                try{
+                    value = Integer.parseInt(array[i-1][c-1]);
+                } catch (IllegalArgumentException e){
+                    value = 0;
+                    String message = "в "+String.valueOf(row)+" ряду, "+String.valueOf(cell)+" ячейке";
+                    throw new MyArrayDataException(message);
+                }
+
+                summ += value;
             }
         }
-        for (int i = 0; i < action.length; i++) {
-            boolean result = true;
-            for (int j = 0; j < barriers.length; j++) {
-            }
-        }
+
+        return summ;
+    }
+    }
+    
+    
+    
+    public class MyArrayDataException extends RuntimeException{
+    public MyArrayDataException(String message) {
+        super("Некорректные данные "+message);
+    }
+
+    public boolean startMessage() {
+        return false;
     }
 }
+
+
+public class MyArraySizeException extends RuntimeException {
+    public MyArraySizeException() {
+        super("Размер массива не корректный!");
+    }
+
+    public boolean startMessage() {
+        return false;
+    }
+}
+
